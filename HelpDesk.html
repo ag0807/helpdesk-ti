@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelpDesk TI - Portal de Suporte & Gestão Executiva</title>
+    <!-- Tailwind CSS (CDN Autônoma) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 
+                            50: '#eff6ff', 
+                            100: '#dbeafe', 
+                            200: '#bfdbfe',
+                            500: '#3b82f6', 
+                            600: '#2563eb', 
+                            700: '#1d4ed8', 
+                            800: '#1e40af',
+                            900: '#1e3a8a' 
+                        },
+                        executive: {
+                            800: '#312e81',
+                            900: '#1e1b4b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .chat-bubble-user { border-radius: 18px 18px 2px 18px; }
+        .chat-bubble-tech { border-radius: 18px 18px 18px 2px; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-full flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+<!-- 1. LOGIN & REGISTRATION SCREEN -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-900">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-brand-900 via-slate-900 to-black opacity-90"></div>
+    
+    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-lg p-8 relative z-10 border border-white/20 my-8">
+        <div class="text-center mb-6">
+            <div class="bg-brand-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg text-white">
+                <i class="fa-solid fa-headset text-3xl"></i>
+            </div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Portal HelpDesk</h1>
+            <p class="text-slate-500 text-xs mt-1">Plataforma Integrada de Suporte Técnico & Gestão Executiva</p>
+        </div>
+
+        <!-- Login Selector Tabs -->
+        <div class="bg-slate-200/80 p-1 rounded-2xl flex space-x-1 mb-6">
+            <button id="tabBtnUser" onclick="switchLoginTab('user')" class="flex-1 py-2 text-[11px] font-bold rounded-xl bg-white shadow-sm text-brand-900 transition-all">
+                <i class="fa-solid fa-store mr-1"></i> Lojista
+            </button>
+            <button id="tabBtnTech" onclick="switchLoginTab('tech')" class="flex-1 py-2 text-[11px] font-semibold rounded-xl text-slate-500 hover:text-slate-800 transition-all">
+                <i class="fa-solid fa-user-shield mr-1"></i> Técnico
+            </button>
+            <button id="tabBtnDirector" onclick="switchLoginTab('director')" class="flex-1 py-2 text-[11px] font-semibold rounded-xl text-slate-500 hover:text-slate-800 transition-all">
+                <i class="fa-solid fa-user-tie mr-1"></i> Direção / Chefia
+            </button>
+        </div>
+
+        <!-- FORM 1: Colaborador / Loja (Login) -->
+        <form id="userLoginForm" onsubmit="handleUserLogin(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Identificação da Loja / Filial *</label>
+                <div class="relative">
+                    <i class="fa-solid fa-shop absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input type="text" id="loginStoreName" required placeholder="Ex: Loja Belas Shopping - Filial 01" class="w-full pl-10 border-slate-300 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 px-4 py-2.5 border text-xs">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nome do Colaborador *</label>
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input type="text" id="loginCollabName" required placeholder="Ex: Sónia Mateus" class="w-full pl-10 border-slate-300 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 px-4 py-2.5 border text-xs">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Palavra-passe de Colaborador *</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input type="password" id="loginCollabPassword" required placeholder="Digite a sua palavra-passe" class="w-full pl-10 border-slate-300 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 px-4 py-2.5 border text-xs">
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl transition-all shadow-md flex items-center justify-center space-x-2 text-xs">
+                <span>Entrar como Lojista</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+
+            <div class="pt-3 border-t border-slate-100 text-center">
+                <button type="button" onclick="openRegisterModal()" class="text-xs font-bold text-brand-600 hover:text-brand-800 underline">
+                    <i class="fa-solid fa-user-plus mr-1"></i> Não tem conta? Criar Perfil com Senha
+                </button>
+            </div>
+        </form>
+
+        <!-- FORM 2: Técnico Admin com Password -->
+        <form id="techLoginForm" onsubmit="handleTechLogin(event)" class="space-y-4 hidden">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Selecionar Técnico Admin *</label>
+                <div class="relative">
+                    <i class="fa-solid fa-user-gear absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <select id="loginTechSelect" class="w-full pl-10 border-slate-300 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 px-4 py-2.5 border text-xs bg-white">
+                        <option value="tech_antonio">António Giconda (Técnico Sénior / Admin)</option>
+                        <option value="tech_jose">José Silvestre (Hardware , Gestor & POS)</option>
+                        <option value="tech_elias">Elias Gabriel (Suporte Técnico TI)</option>
+                        <option value="tech_paulino">Paulino Katito (Suporte Sistemas, Hardware & Vendas)</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Palavra-passe de Acesso Técnico *</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input type="password" id="loginTechPassword" required placeholder="Palavra-passe (Padrão: admin123)" class="w-full pl-10 border-slate-300 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 px-4 py-2.5 border text-xs">
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-xl transition-all shadow-md flex items-center justify-center space-x-2 text-xs">
+                <span>Autenticar como Técnico</span>
+                <i class="fa-solid fa-shield-halved"></i>
+            </button>
+
+            <!-- Acesso Rápido -->
+            <div class="pt-3 border-t border-slate-100">
+                <p class="text-[10px] text-slate-400 font-bold uppercase mb-2 text-center">Atalhos de Acesso (Modo Teste):</p>
+                <div class="grid grid-cols-2 gap-2 text-[10px]">
+                    <button type="button" onclick="quickFillTech('tech_antonio')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 text-left truncate">
+                        <i class="fa-solid fa-key text-amber-500 mr-1"></i> António Giconda
+                    </button>
+                    <button type="button" onclick="quickFillTech('tech_jose')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 text-left truncate">
+                        <i class="fa-solid fa-key text-amber-500 mr-1"></i> José Silvestre
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- FORM 3: Direção / Chefia Executiva -->
+        <form id="directorLoginForm" onsubmit="handleDirectorLogin(event)" class="space-y-4 hidden">
+            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-800">
+                <i class="fa-solid fa-triangle-exclamation mr-1 text-amber-600"></i>
+                <strong>Área Restrita da Chefia:</strong> Acesso total a relatórios de auditoria, tempos de atendimento e avaliações de cada técnico.
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Diretor / Chefe de Serviço *</label>
+                <div class="relative">
+                    <i class="fa-solid fa-user-tie absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <select id="loginDirectorSelect" class="w-full pl-10 border-slate-300 rounded-xl shadow-sm focus:ring-amber-500 focus:border-amber-500 px-4 py-2.5 border text-xs bg-white">
+                        <option value="dir_carlos">Dr. YongBin Cheng (Diretor Geral de TI & Operações)</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Palavra-passe de Acesso Executivo *</label>
+                <div class="relative">
+                    <i class="fa-solid fa-key absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input type="password" id="loginDirectorPassword" required placeholder="Palavra-passe (Padrão: director123)" class="w-full pl-10 border-slate-300 rounded-xl shadow-sm focus:ring-amber-500 focus:border-amber-500 px-4 py-2.5 border text-xs">
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-executive-800 hover:bg-executive-900 text-white font-bold py-3 rounded-xl transition-all shadow-md flex items-center justify-center space-x-2 text-xs">
+                <span>Entrar como Diretor / Chefia</span>
+                <i class="fa-solid fa-award"></i>
+            </button>
+
+            <div class="pt-2 text-center">
+                <button type="button" onclick="quickFillDirector()" class="text-[10px] font-bold text-slate-500 hover:text-slate-800">
+                    <i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Preencher credenciais de teste da Direção
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+            <span><i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i> Sistema Autônomo v4.0</span>
+            <span>HelpDesk TI Angola</span>
+        </div>
+    </div>
+</div>
+
+<!-- 2. MAIN APPLICATION SCREEN -->
+<div id="mainAppScreen" class="hidden flex-1 flex flex-col min-h-screen">
+    
+    <!-- Top Header Navigation -->
+    <header class="bg-brand-900 text-white shadow-xl sticky top-0 z-40 border-b border-brand-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div id="appHeaderLogo" class="bg-brand-600 p-2 rounded-xl text-white shadow-md">
+                    <i class="fa-solid fa-headset text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-black tracking-wide leading-none">HelpDesk TI</h1>
+                    <p class="text-[10px] text-brand-200 uppercase font-bold tracking-wider mt-1">Gestão de TI, Suporte & Auditoria Executiva</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <div class="text-right border-l border-brand-800 pl-4">
+                    <p id="navUserName" class="text-xs font-bold text-white leading-tight">Utilizador</p>
+                    <div id="navRoleBadge" class="mt-0.5"></div>
+                </div>
+                <button onclick="logout()" title="Terminar Sessão" class="p-2 bg-brand-800 hover:bg-rose-600 rounded-xl text-brand-100 transition-colors">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col space-y-6">
+        
+        <!-- Admin & Executive Banners -->
+        <div id="adminBannerNotice" class="hidden bg-slate-900 text-white p-4 rounded-2xl shadow-sm border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-user-shield text-lg"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-white">Modo Técnico Admin Ativo</h4>
+                    <p class="text-[11px] text-slate-300">Permissões para editar chamados, atribuir suporte técnico e responder aos colaboradores.</p>
+                </div>
+            </div>
+            <span class="text-[10px] font-mono bg-slate-800 border border-slate-700 px-3 py-1 rounded-lg text-amber-400 font-bold">Nível Técnico - N2</span>
+        </div>
+
+        <div id="directorBannerNotice" class="hidden bg-executive-900 text-white p-4 rounded-2xl shadow-sm border border-executive-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-400/20 border border-amber-400/40 text-amber-300 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-award text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider">Painel Privilegiado da Direção / Chefia</h4>
+                    <p class="text-[11px] text-slate-200">Visualização de auditoria avançada, indicadores globais e módulo de avaliação direta de desempenho dos técnicos.</p>
+                </div>
+            </div>
+            <span class="text-[10px] font-mono bg-amber-500 text-slate-900 px-3 py-1 rounded-lg font-black uppercase tracking-wider">Acesso Executivo Máximo</span>
+        </div>
+
+        <!-- Navigation Tabs Bar -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex items-center space-x-1 w-full sm:w-auto overflow-x-auto">
+                <button id="tabLinkChamados" onclick="switchMainTab('chamados')" class="px-4 py-2 font-bold text-xs rounded-xl bg-brand-600 text-white shadow-md border-brand-700 whitespace-nowrap">
+                    <i class="fa-solid fa-list-check mr-1.5"></i> Chamados & Ocorrências
+                </button>
+                <button id="tabLinkDirector" onclick="switchMainTab('director')" class="hidden px-4 py-2 font-bold text-xs rounded-xl text-slate-600 hover:bg-slate-100 transition-all border border-transparent whitespace-nowrap">
+                    <i class="fa-solid fa-chart-line mr-1.5 text-amber-600"></i> Análise de Técnicos (Direção)
+                </button>
+                <button id="tabLinkChat" onclick="switchMainTab('chat')" class="px-4 py-2 font-bold text-xs rounded-xl text-slate-600 hover:bg-slate-100 transition-all border border-transparent whitespace-nowrap">
+                    <i class="fa-solid fa-comments mr-1.5"></i> Contactar Técnico / Chat
+                </button>
+                <button id="tabLinkTechs" onclick="switchMainTab('techs')" class="px-4 py-2 font-bold text-xs rounded-xl text-slate-600 hover:bg-slate-100 transition-all border border-transparent whitespace-nowrap">
+                    <i class="fa-solid fa-users-gear mr-1.5"></i> Equipas de TI
+                </button>
+            </div>
+
+            <button onclick="openNewTicketModal()" class="w-full sm:w-auto bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 text-xs">
+                <i class="fa-solid fa-plus"></i>
+                <span>Abrir Novo Chamado</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: CHAMADOS -->
+        <div id="viewChamados" class="space-y-6">
+            
+            <!-- Tech Admin / Director Stats Grid -->
+            <div id="techStatsRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Registado</p><h3 id="statTotal" class="text-2xl font-black text-slate-900 mt-0.5">0</h3></div>
+                    <div class="bg-slate-100 text-slate-600 p-3 rounded-xl"><i class="fa-solid fa-folder-open text-xl"></i></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Abertos</p><h3 id="statAbertos" class="text-2xl font-black text-rose-600 mt-0.5">0</h3></div>
+                    <div class="bg-rose-50 text-rose-600 p-3 rounded-xl"><i class="fa-solid fa-circle-exclamation text-xl"></i></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Em Andamento</p><h3 id="statAndamento" class="text-2xl font-black text-amber-600 mt-0.5">0</h3></div>
+                    <div class="bg-amber-50 text-amber-600 p-3 rounded-xl"><i class="fa-solid fa-spinner text-xl"></i></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Concluídos</p><h3 id="statConcluidos" class="text-2xl font-black text-emerald-600 mt-0.5">0</h3></div>
+                    <div class="bg-emerald-50 text-emerald-600 p-3 rounded-xl"><i class="fa-solid fa-check-circle text-xl"></i></div>
+                </div>
+            </div>
+
+            <!-- Search & Filters -->
+            <div id="techFilterBox" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-search absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchInput" oninput="renderTickets()" placeholder="Pesquisar por ID, loja, colaborador, equipamento..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-brand-500">
+                </div>
+                <select id="filterStatus" onchange="renderTickets()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700">
+                    <option value="">Todos os Estados</option>
+                    <option value="Aberto">Aberto</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Pendente Peças">Pendente Peças</option>
+                    <option value="Concluído">Concluído</option>
+                </select>
+                <select id="filterTech" onchange="renderTickets()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700">
+                    <option value="">Todos os Técnicos</option>
+                    <option value="tech_antonio">António Giconda</option>
+                    <option value="tech_jose">José Silvestre</option>
+                    <option value="tech_elias">Elias Gabriel</option>
+                    <option value="tech_paulino">Paulino Katito</option>
+                </select>
+            </div>
+
+            <!-- Tickets Table -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <div id="tableContainer" class="overflow-x-auto hidden">
+                    <table class="w-full text-left border-collapse min-w-[850px]">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                                <th class="py-3.5 px-4">ID Chamado</th>
+                                <th class="py-3.5 px-4">Data</th>
+                                <th class="py-3.5 px-4">Loja / Filial</th>
+                                <th class="py-3.5 px-4">Equipamento</th>
+                                <th class="py-3.5 px-4">Técnico Resp.</th>
+                                <th class="py-3.5 px-4">Prioridade</th>
+                                <th class="py-3.5 px-4">Estado</th>
+                                <th class="py-3.5 px-4 text-right">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticketTableBody" class="divide-y divide-slate-100">
+                            <!-- JS render -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="emptyState" class="hidden flex-col items-center justify-center py-16 px-4 text-center">
+                    <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mb-3 text-2xl">
+                        <i class="fa-regular fa-folder-open"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800">Nenhum chamado encontrado</h3>
+                    <p class="text-xs text-slate-500 max-w-sm mt-1">Ainda não há registos guardados no sistema com esses critérios.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: PAINEL DA DIREÇÃO / CHEFIA (ANÁLISE DE TÉCNICOS) -->
+        <div id="viewDirector" class="hidden space-y-6">
+            
+            <div class="bg-gradient-to-r from-executive-900 via-slate-900 to-executive-800 text-white p-6 rounded-2xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span class="bg-amber-400 text-slate-900 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full">Painel da Chefia</span>
+                    <h3 class="text-xl font-black mt-2">Módulo de Auditoria & Avaliação de Técnicos</h3>
+                    <p class="text-xs text-slate-300 mt-1 max-w-2xl">Acompanhe métricas em tempo real, eficiência de resolução de incidentes e introduza observações de avaliação de desempenho para cada membro da equipa de TI.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 text-center min-w-[160px]">
+                    <span class="block text-[10px] font-bold text-amber-300 uppercase">Taxa de Resolução Global</span>
+                    <span id="directorGlobalRate" class="text-2xl font-black text-white">0%</span>
+                </div>
+            </div>
+
+            <!-- Executive Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-brand-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Tempo Médio Resposta</p>
+                        <h4 class="text-lg font-black text-slate-900">~ 22 Minutos</h4>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Índice de Satisfação Lojas</p>
+                        <h4 class="text-lg font-black text-slate-900">4.9 / 5.0</h4>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-shield-cat"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Incidentes Críticos Resolvidos</p>
+                        <h4 id="directorCriticalCount" class="text-lg font-black text-slate-900">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List of Technicians with Individual Analysis & Review Textarea -->
+            <div class="space-y-4">
+                <h4 class="text-xs font-extrabold uppercase text-slate-500 tracking-wider flex items-center">
+                    <i class="fa-solid fa-user-gear mr-2 text-brand-600"></i> Relatório Individual & Avaliação por Técnico
+                </h4>
+
+                <div id="directorTechAnalysisGrid" class="space-y-4">
+                    <!-- JS render -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: CHAT E SUPORTE DIRETO -->
+        <div id="viewChat" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 min-h-[500px]">
+            <!-- Left: Technicians List -->
+            <div class="border-r border-slate-100 pr-0 md:pr-4 space-y-3">
+                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center">
+                    <i class="fa-solid fa-user-shield text-brand-600 mr-2"></i> Técnicos de TI da Empresa
+                </h4>
+                <div id="chatTechList" class="space-y-1 overflow-y-auto max-h-[420px]">
+                    <!-- Rendered JS -->
+                </div>
+            </div>
+
+            <!-- Right: Messaging Container -->
+            <div class="md:col-span-2 flex flex-col h-[480px]">
+                <!-- Chat Header -->
+                <div class="pb-3 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h4 id="activeChatTechName" class="text-xs font-bold text-slate-900">António Giconda</h4>
+                        <p id="activeChatTechSpec" class="text-[10px] text-slate-400 font-semibold">Técnico Sénior / Admin</p>
+                    </div>
+                    <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full">
+                        <i class="fa-solid fa-circle text-[6px] mr-1"></i> Linha Direta
+                    </span>
+                </div>
+
+                <!-- Chat History Box -->
+                <div id="chatMessagesBox" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/70 my-3 rounded-2xl border border-slate-100">
+                    <!-- Rendered JS -->
+                </div>
+
+                <!-- Chat Input Form -->
+                <form onsubmit="sendChatMessage(event)" class="flex items-center space-x-2">
+                    <input type="text" id="chatInputText" required placeholder="Escreva a sua mensagem para o técnico..." class="flex-1 border-slate-300 rounded-xl px-4 py-2.5 text-xs border focus:ring-brand-500 bg-white">
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm text-xs flex items-center space-x-1">
+                        <span>Enviar</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 4: EQUIPA DE TI (DIRECTÓRIO) -->
+        <div id="viewTechs" class="hidden space-y-4">
+            <div class="bg-brand-900 text-white p-6 rounded-2xl shadow-md flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-black">Equipa Oficial de Técnicos de TI</h3>
+                    <p class="text-xs text-brand-200 mt-1">Contacte diretamente o técnico especialista responsável pela sua área de necessidade.</p>
+                </div>
+                <div class="bg-brand-800 p-3 rounded-xl border border-brand-700 text-2xl text-amber-400">
+                    <i class="fa-solid fa-user-gear"></i>
+                </div>
+            </div>
+
+            <div id="techCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Rendered JS -->
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- MODAL 1: Registo / Criar Perfil de Colaborador Lojista com Senha -->
+<div id="registerModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-slate-100">
+        <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center">
+                <i class="fa-solid fa-user-plus text-brand-600 mr-2"></i> Criar Perfil de Colaborador (Com Senha)
+            </h3>
+            <button onclick="closeRegisterModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form onsubmit="handleUserRegistration(event)" class="space-y-3 text-xs">
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Identificação da Loja / Filial *</label>
+                <input type="text" id="regStoreName" required placeholder="Ex: Loja Belas Shopping - Filial 01" class="w-full border rounded-xl px-3 py-2 text-xs">
+            </div>
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Nome Completo do Colaborador *</label>
+                <input type="text" id="regCollabName" required placeholder="Ex: Maria António" class="w-full border rounded-xl px-3 py-2 text-xs">
+            </div>
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Escolher Palavra-passe *</label>
+                <input type="password" id="regPassword" required placeholder="Mínimo 4 caracteres" class="w-full border rounded-xl px-3 py-2 text-xs">
+            </div>
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Confirmar Palavra-passe *</label>
+                <input type="password" id="regPasswordConfirm" required placeholder="Repita a palavra-passe" class="w-full border rounded-xl px-3 py-2 text-xs">
+            </div>
+
+            <div class="pt-3 flex justify-end space-x-2">
+                <button type="button" onclick="closeRegisterModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold">Cancelar</button>
+                <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md">Registar & Entrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL 2: Novo Chamado -->
+<div id="ticketModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col max-h-[92vh]">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center">
+                <i class="fa-solid fa-plus-circle text-brand-600 mr-2"></i> Abrir Novo Chamado de Suporte
+            </h3>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <div class="p-6 overflow-y-auto space-y-6 text-xs">
+            <form id="ticketForm" onsubmit="saveNewTicket(event)" class="space-y-6">
+                
+                <!-- Section 1 -->
+                <div>
+                    <h4 class="font-bold text-slate-800 border-b pb-1 mb-3 uppercase text-[10px] tracking-wider text-brand-700">1. Dados de Origem</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-600">ID Chamado</label>
+                            <input type="text" id="formTicketId" readonly class="w-full bg-slate-100 border rounded-xl px-3 py-2 font-mono font-bold text-slate-600">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-600">Data / Hora</label>
+                            <input type="text" id="formTicketDate" readonly class="w-full bg-slate-100 border rounded-xl px-3 py-2 text-slate-600">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-600">Loja / Filial *</label>
+                            <input type="text" id="formStore" required placeholder="Ex: Loja Belas Shopping" class="w-full border rounded-xl px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-600">Colaborador Abertura *</label>
+                            <input type="text" id="formCollaborator" required placeholder="Nome do funcionário" class="w-full border rounded-xl px-3 py-2">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block font-semibold mb-1 text-slate-600">Contacto (Ramal / Telemóvel) *</label>
+                            <input type="text" id="formContact" required placeholder="Ex: Ramal 104 / 923000000" class="w-full border rounded-xl px-3 py-2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2 -->
+                <div>
+                    <h4 class="font-bold text-slate-800 border-b pb-1 mb-3 uppercase text-[10px] tracking-wider text-brand-700">2. Classificação & Atribuição</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-600">Tipo de Registo *</label>
+                            <select id="formType" required class="w-full border rounded-xl px-3 py-2 bg-white">
+                                <option value="Venda / Equipamento Novo">Venda / Equipamento Novo</option>
+                                <option value="Reclamação de Cliente">Reclamação de Cliente</option>
+                                <option value="Suporte Interno / Operacional">Suporte Interno / Operacional</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-600">Prioridade *</label>
+                            <select id="formPriority" required class="w-full border rounded-xl px-3 py-2 bg-white">
+                                <option value="Baixa">Baixa</option>
+                                <option value="Média" selected>Média</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Crítica">Crítica (Urgência Balcão)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-600">Atribuir a Técnico Especialista</label>
+                            <select id="formTechAssign" class="w-full border rounded-xl px-3 py-2 bg-white">
+                                <!-- JS options -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3 -->
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-800 mb-2 uppercase text-[10px] tracking-wider text-slate-600">3. Dados do Cliente (Se Aplicável)</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div class="sm:col-span-2">
+                            <label class="block font-semibold mb-1 text-slate-600">Nome do Cliente</label>
+                            <input type="text" id="formClientName" placeholder="Opcional" class="w-full border rounded-xl px-3 py-2 bg-white">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block font-semibold mb-1 text-slate-600">Contacto do Cliente</label>
+                            <input type="text" id="formClientContact" placeholder="Opcional" class="w-full border rounded-xl px-3 py-2 bg-white">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block font-semibold mb-1 text-slate-600">Nº Fatura / Talão</label>
+                            <input type="text" id="formInvoice" placeholder="Ex: FT 2026/102" class="w-full border rounded-xl px-3 py-2 bg-white">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block font-semibold mb-1 text-slate-600">Data Compra</label>
+                            <input type="date" id="formPurchaseDate" class="w-full border rounded-xl px-3 py-2 bg-white">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4 -->
+                <div>
+                    <h4 class="font-bold text-slate-800 border-b pb-1 mb-3 uppercase text-[10px] tracking-wider text-brand-700">4. Descrição do Problema</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-600">Equipamento (Marca / Modelo / N.º Série) *</label>
+                            <input type="text" id="formEquipment" required placeholder="Ex: HP Pavilion 15 - SN: CND1029X" class="w-full border rounded-xl px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-600">Descrição Detalhada do Sintoma *</label>
+                            <textarea id="formDescription" required rows="3" placeholder="Explique com detalhe a avaria ou a necessidade da loja..." class="w-full border rounded-xl px-3 py-2"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5 -->
+                <div>
+                    <h4 class="font-bold text-slate-800 border-b pb-1 mb-3 uppercase text-[10px] tracking-wider text-brand-700">5. Diagnóstico Inicial da Loja</h4>
+                    <div class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="diagCharger" class="rounded text-brand-600">
+                            <span class="text-slate-700">Testado com outro carregador / tomada</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="diagReset" class="rounded text-brand-600">
+                            <span class="text-slate-700">Reiniciado equipamento / Hard reset</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="diagCables" class="rounded text-brand-600">
+                            <span class="text-slate-700">Verificação de cabos físicos e rede</span>
+                        </label>
+                    </div>
+                    <div class="mt-3">
+                        <label class="block font-semibold mb-1 text-slate-600">Observações Adicionais</label>
+                        <textarea id="formNotes" rows="2" placeholder="Outras notas úteis..." class="w-full border rounded-xl px-3 py-2"></textarea>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 font-bold">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-white bg-brand-600 hover:bg-brand-700 font-bold shadow-md">Submeter Chamado</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 3: Detalhes do Chamado -->
+<div id="detailsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col max-h-[90vh]">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-start bg-slate-50 rounded-t-2xl">
+            <div>
+                <h3 class="text-sm font-bold text-slate-900 flex items-center">
+                    <i class="fa-solid fa-ticket text-brand-600 mr-2"></i> Chamado <span id="detId" class="ml-2 font-mono text-brand-700"></span>
+                </h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Registado a: <span id="detDate"></span></p>
+            </div>
+            <button onclick="closeDetailsModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700">
+            <div class="grid grid-cols-2 gap-4">
+                <div><span class="block text-[10px] uppercase font-bold text-slate-400">Loja / Filial</span> <span id="detStore" class="font-bold text-slate-800 text-sm"></span></div>
+                <div><span class="block text-[10px] uppercase font-bold text-slate-400">Colaborador / Contacto</span> <span id="detCollab" class="font-bold text-slate-800"></span> (<span id="detContact"></span>)</div>
+                <div><span class="block text-[10px] uppercase font-bold text-slate-400">Tipo de Registo</span> <span id="detType" class="font-bold text-brand-700"></span></div>
+                <div><span class="block text-[10px] uppercase font-bold text-slate-400">Prioridade</span> <span id="detPriority" class="font-bold"></span></div>
+                <div><span class="block text-[10px] uppercase font-bold text-slate-400">Técnico Atribuído</span> <span id="detTechAssigned" class="font-bold text-slate-900"></span></div>
+                <div><span class="block text-[10px] uppercase font-bold text-slate-400">Estado Atual</span> <span id="detStatusBadge"></span></div>
+            </div>
+
+            <div class="border-t pt-3">
+                <h5 class="font-bold text-slate-800 uppercase text-[10px] mb-1">Cliente & Compra</h5>
+                <p><strong>Nome:</strong> <span id="detClient"></span> | <strong>Contacto:</strong> <span id="detClientContact"></span></p>
+                <p><strong>Fatura:</strong> <span id="detInvoice"></span> | <strong>Data Compra:</strong> <span id="detPurchase"></span></p>
+            </div>
+
+            <div class="border-t pt-3">
+                <h5 class="font-bold text-slate-800 uppercase text-[10px] mb-1">Equipamento & Problema</h5>
+                <p class="font-bold text-slate-900 mb-1" id="detEquip"></p>
+                <p id="detDesc" class="bg-slate-50 p-3 rounded-xl border text-slate-700 whitespace-pre-wrap leading-relaxed"></p>
+            </div>
+
+            <div class="border-t pt-3">
+                <h5 class="font-bold text-slate-800 uppercase text-[10px] mb-1">Diagnóstico da Loja</h5>
+                <div class="space-y-1">
+                    <div><i id="detDiagCharger"></i> Testado com outro carregador</div>
+                    <div><i id="detDiagReset"></i> Hard reset efetuado</div>
+                    <div><i id="detDiagCables"></i> Cabos e conexões verificadas</div>
+                </div>
+                <p id="detNotes" class="italic text-slate-500 mt-2 bg-slate-50 p-2 rounded-lg border"></p>
+            </div>
+
+            <div class="border-t pt-3 bg-brand-50 p-3 rounded-xl border border-brand-100">
+                <h5 class="font-bold text-brand-900 uppercase text-[10px] mb-1"><i class="fa-solid fa-user-gear mr-1"></i> Relatório Técnico / Resolução</h5>
+                <p id="detResolutionNotes" class="text-slate-800 font-medium whitespace-pre-wrap"></p>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 border-t bg-slate-50 rounded-b-2xl flex items-center justify-between">
+            <button id="detContactTechBtn" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1">
+                <i class="fa-solid fa-comments"></i>
+                <span>Enviar Mensagem ao Técnico</span>
+            </button>
+            <button onclick="closeDetailsModal()" class="px-4 py-2 bg-slate-800 text-white font-bold rounded-xl text-xs">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 4: Edição Completa de Chamado (Técnico / Admin / Direção) -->
+<div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col max-h-[92vh]">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-900 text-white rounded-t-2xl">
+            <h3 class="text-sm font-bold flex items-center">
+                <i class="fa-solid fa-user-shield text-amber-400 mr-2"></i> Edição de Chamado (Painel Admin) - <span id="editTicketId" class="ml-1 font-mono text-amber-300"></span>
+            </h3>
+            <button onclick="closeEditModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <div class="p-6 overflow-y-auto text-xs space-y-4">
+            <form onsubmit="saveEditedTicket(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1 text-slate-700">Estado do Chamado *</label>
+                        <select id="editStatus" required class="w-full border rounded-xl px-3 py-2 bg-white font-bold text-slate-800">
+                            <option value="Aberto">Aberto</option>
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Pendente Peças">Pendente Peças</option>
+                            <option value="Concluído">Concluído</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-slate-700">Atribuir Técnico Responsável *</label>
+                        <select id="editTechAssign" class="w-full border rounded-xl px-3 py-2 bg-white font-bold text-slate-800">
+                            <!-- JS options -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-slate-700">Prioridade *</label>
+                        <select id="editPriority" required class="w-full border rounded-xl px-3 py-2 bg-white">
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média">Média</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Crítica">Crítica</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-slate-700">Loja / Filial</label>
+                        <input type="text" id="editStore" required class="w-full border rounded-xl px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-slate-700">Colaborador</label>
+                        <input type="text" id="editCollaborator" required class="w-full border rounded-xl px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-slate-700">Contacto</label>
+                        <input type="text" id="editContact" required class="w-full border rounded-xl px-3 py-2">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold mb-1 text-slate-700">Equipamento</label>
+                    <input type="text" id="editEquipment" required class="w-full border rounded-xl px-3 py-2">
+                </div>
+
+                <div>
+                    <label class="block font-bold mb-1 text-slate-700">Descrição Detalhada</label>
+                    <textarea id="editDescription" required rows="3" class="w-full border rounded-xl px-3 py-2"></textarea>
+                </div>
+
+                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+                    <label class="block font-bold mb-1 text-amber-900 uppercase text-[10px]">Relatório Técnico de Resolução / Observações do Admin</label>
+                    <textarea id="editResolutionNotes" rows="3" placeholder="Escreva o parecer técnico, procedimentos realizados ou peças substituídas..." class="w-full border border-amber-300 rounded-xl px-3 py-2 bg-white text-xs"></textarea>
+                </div>
+
+                <div class="pt-3 border-t flex justify-end space-x-2">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 font-bold">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-white bg-slate-900 hover:bg-black font-bold shadow-md">Guardar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação Personalizado -->
+<div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4">
+        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 class="text-sm font-bold text-slate-900" id="confirmModalText">Tem a certeza?</h3>
+        <div class="flex items-center justify-center space-x-3 pt-2">
+            <button onclick="closeConfirmModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200">Cancelar</button>
+            <button onclick="window.activeConfirmAction && window.activeConfirmAction()" class="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-slate-900 hover:bg-black">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Global Toast Notification -->
+<div id="globalToast" class="fixed bottom-5 right-5 px-6 py-3 rounded-xl shadow-2xl text-white text-xs font-semibold transition-all transform duration-300 translate-y-10 opacity-0 z-[100] bg-emerald-600 pointer-events-none">
+    Ação realizada com sucesso!
+</div>
+
+<!-- JAVASCRIPT APP ENGINE -->
+<script>
+    const STORAGE_KEY_TICKETS = 'inovati_tickets_v4';
+    const STORAGE_KEY_PROFILE = 'inovati_profile_v4';
+    const STORAGE_KEY_MESSAGES = 'inovati_messages_v4';
+    const STORAGE_KEY_USERS = 'inovati_users_v4';
+    const STORAGE_KEY_REVIEWS = 'inovati_tech_reviews_v4';
+
+    // Lista Oficial de Técnicos Admin da Empresa
+    const OFFICIAL_TECHNICIANS = [
+        {
+            id: 'tech_antonio',
+            name: 'António Giconda',
+            role: 'Técnico Sénior / Admin TI',
+            email: 'antonio.giconda@inovati.co.ao',
+            password: 'admin123',
+            phone: '+244 923 003 654',
+            status: 'online',
+            avatarColor: 'bg-blue-600',
+            spec: 'Servidores & Infraestrutura'
+        },
+        {
+            id: 'tech_jose',
+            name: 'José Silvestre',
+            role: 'Hardware, Gestor & POS',
+            email: 'jose.silvestre@inovati.co.ao',
+            password: 'admin123',
+            phone: '+244 930 339 436',
+            status: 'online',
+            avatarColor: 'bg-emerald-600',
+            spec: 'Hardware, Impressoras & POS'
+        },
+        {
+            id: 'tech_elias',
+            name: 'Elias Gabriel',
+            role: 'Analista de Suporte Técnico',
+            email: 'elias.gabriel@inovati.co.ao',
+            password: 'admin123',
+            phone: '+244 923 100 203',
+            status: 'busy',
+            avatarColor: 'bg-purple-600',
+            spec: 'Analista de Suporte Técnico'
+        },
+        {
+            id: 'tech_paulino',
+            name: 'Paulino Katito',
+            role: 'Consultor de Suporte, Hardware & Vendas',
+            email: 'paulino.katito@inovati.co.ao',
+            password: 'admin123',
+            phone: '+244 972 888 787',
+            status: 'online',
+            avatarColor: 'bg-amber-600',
+            spec: 'Configuração Inicial & Hardware'
+        }
+    ];
+
+    // Lista Oficial da Direção / Chefia
+    const OFFICIAL_DIRECTORS = [
+        {
+            id: 'dir_carlos',
+            name: 'Dr. YongBin Cheng',
+            role: 'Diretor Geral da Empresa & Operações',
+            password: 'director123'
+        }
+    ];
+
+    window.App = {
+        profile: null,
+        tickets: [],
+        messages: [],
+        registeredUsers: [],
+        techReviews: {},
+        activeChatTechId: 'tech_antonio',
+
+        init: function() {
+            // Load saved profile
+            const savedProfile = localStorage.getItem(STORAGE_KEY_PROFILE);
+            if (savedProfile) {
+                try { this.profile = JSON.parse(savedProfile); } catch(e) { this.profile = null; }
+            }
+
+            // Load registered Lojista users
+            const savedUsers = localStorage.getItem(STORAGE_KEY_USERS);
+            if (savedUsers) {
+                try { this.registeredUsers = JSON.parse(savedUsers); } catch(e) { this.registeredUsers = []; }
+            } else {
+                // Seed demo registered collaborator account
+                this.registeredUsers = [
+                    {
+                        name: 'Sónia Mateus',
+                        store: 'Loja Belas Shopping - Filial 01',
+                        password: '1234'
+                    }
+                ];
+                this.saveUsers();
+            }
+
+            // Load Director Reviews for Technicians
+            const savedReviews = localStorage.getItem(STORAGE_KEY_REVIEWS);
+            if (savedReviews) {
+                try { this.techReviews = JSON.parse(savedReviews); } catch(e) { this.techReviews = {}; }
+            } else {
+                this.techReviews = {
+                    'tech_antonio': 'Desempenho exímio na gestão de servidores. Excelente liderança no atendimento de chamados críticos.',
+                    'tech_jose': 'Agilidade muito boa na resolução de avarias do sistema POS e impressoras no balcão.'
+                };
+                this.saveTechReviews();
+            }
+
+            // Load saved tickets
+            const savedTickets = localStorage.getItem(STORAGE_KEY_TICKETS);
+            if (savedTickets) {
+                try { this.tickets = JSON.parse(savedTickets); } catch(e) { this.tickets = []; }
+            } else {
+                // Seed initial tickets
+                this.tickets = [
+                    {
+                        id: 'tick_101',
+                        displayId: 'TICK-2026-001',
+                        createdAt: Date.now() - 3600000 * 3,
+                        store: 'Loja Belas Shopping - Filial 01',
+                        collaborator: 'Sónia Mateus',
+                        contact: '923 456 789 / Ext. 12',
+                        type: 'Venda / Equipamento Novo',
+                        priority: 'Média',
+                        clientName: 'Manuel Neto',
+                        clientContact: '912 987 654',
+                        invoice: 'FT 2026/8812',
+                        purchaseDate: '2026-09-27',
+                        equipment: 'HP ProBook 450 G8 - SN: CND10928X',
+                        description: 'Cliente comprou equipamento novo no balcão e solicita instalação do sistema de faturação.',
+                        diagCharger: true,
+                        diagReset: true,
+                        diagCables: true,
+                        notes: 'Aguardando validação de licença.',
+                        status: 'Concluído',
+                        assignedTechId: 'tech_antonio',
+                        assignedTechName: 'António Giconda',
+                        resolutionNotes: 'Instalação concluída com sucesso. Software configurado.'
+                    },
+                    {
+                        id: 'tick_102',
+                        displayId: 'TICK-2026-002',
+                        createdAt: Date.now() - 3600000 * 24,
+                        store: 'Loja Talatona - Filial 03',
+                        collaborator: 'Hélder Sousa',
+                        contact: '914 555 123',
+                        type: 'Suporte Interno / Operacional',
+                        priority: 'Crítica',
+                        clientName: 'N/A (Interno)',
+                        clientContact: 'N/A',
+                        invoice: 'N/A',
+                        purchaseDate: '',
+                        equipment: 'Impressora de Talões Epson TM-T20',
+                        description: 'Impressora do caixa 02 não imprime talão nem corta papel.',
+                        diagCharger: true,
+                        diagReset: false,
+                        diagCables: true,
+                        notes: 'Caixa 02 indisponível em hora de ponta.',
+                        status: 'Em Andamento',
+                        assignedTechId: 'tech_jose',
+                        assignedTechName: 'José Silvestre',
+                        resolutionNotes: 'Peça de corte de papel em substituição.'
+                    }
+                ];
+                this.saveTickets();
+            }
+
+            // Load saved messages
+            const savedMsgs = localStorage.getItem(STORAGE_KEY_MESSAGES);
+            if (savedMsgs) {
+                try { this.messages = JSON.parse(savedMsgs); } catch(e) { this.messages = []; }
+            } else {
+                this.messages = [
+                    {
+                        id: 'msg_1',
+                        senderRole: 'user',
+                        senderName: 'Loja Belas Shopping',
+                        receiverTechId: 'tech_antonio',
+                        text: 'Olá António! Consegues verificar o chamado TICK-2026-001?',
+                        timestamp: Date.now() - 3600000 * 2
+                    },
+                    {
+                        id: 'msg_2',
+                        senderRole: 'admin',
+                        senderName: 'António Giconda',
+                        receiverTechId: 'tech_antonio',
+                        text: 'Olá! Sim, já está concluído e pronto para entrega.',
+                        timestamp: Date.now() - 3600000 * 1
+                    }
+                ];
+                this.saveMessages();
+            }
+
+            if (this.profile) {
+                setupDashboard();
+            } else {
+                showScreen('loginScreen');
+            }
+        },
+
+        saveTickets: function() {
+            localStorage.setItem(STORAGE_KEY_TICKETS, JSON.stringify(this.tickets));
+            renderTickets();
+            if (this.profile && this.profile.role === 'director') renderDirectorAnalytics();
+        },
+
+        saveMessages: function() {
+            localStorage.setItem(STORAGE_KEY_MESSAGES, JSON.stringify(this.messages));
+            renderChatHistory();
+        },
+
+        saveUsers: function() {
+            localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(this.registeredUsers));
+        },
+
+        saveTechReviews: function() {
+            localStorage.setItem(STORAGE_KEY_REVIEWS, JSON.stringify(this.techReviews));
+        },
+
+        saveProfile: function(profile) {
+            this.profile = profile;
+            localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(profile));
+            setupDashboard();
+        }
+    };
+
+    function switchLoginTab(type) {
+        const btnUser = document.getElementById('tabBtnUser');
+        const btnTech = document.getElementById('tabBtnTech');
+        const btnDir = document.getElementById('tabBtnDirector');
+        
+        const formUser = document.getElementById('userLoginForm');
+        const formTech = document.getElementById('techLoginForm');
+        const formDir = document.getElementById('directorLoginForm');
+
+        const inact = 'flex-1 py-2 text-[11px] font-semibold rounded-xl text-slate-500 hover:text-slate-800 transition-all';
+        const act = 'flex-1 py-2 text-[11px] font-bold rounded-xl bg-white shadow-sm text-brand-900 transition-all';
+
+        if(btnUser) btnUser.className = inact;
+        if(btnTech) btnTech.className = inact;
+        if(btnDir) btnDir.className = inact;
+
+        if(formUser) formUser.classList.add('hidden');
+        if(formTech) formTech.classList.add('hidden');
+        if(formDir) formDir.classList.add('hidden');
+
+        if(type === 'user') {
+            if(btnUser) btnUser.className = act;
+            if(formUser) formUser.classList.remove('hidden');
+        } else if(type === 'tech') {
+            if(btnTech) btnTech.className = act;
+            if(formTech) formTech.classList.remove('hidden');
+        } else if(type === 'director') {
+            if(btnDir) btnDir.className = act;
+            if(formDir) formDir.classList.remove('hidden');
+        }
+    }
+
+    function openRegisterModal() {
+        document.getElementById('registerModal')?.classList.remove('hidden');
+    }
+    function closeRegisterModal() {
+        document.getElementById('registerModal')?.classList.add('hidden');
+    }
+
+    function handleUserRegistration(e) {
+        e.preventDefault();
+        const store = document.getElementById('regStoreName')?.value.trim();
+        const name = document.getElementById('regCollabName')?.value.trim();
+        const pwd = document.getElementById('regPassword')?.value;
+        const pwdConf = document.getElementById('regPasswordConfirm')?.value;
+
+        if(!store || !name || !pwd) {
+            showToast("Preencha todos os campos obrigatórios.", "error");
+            return;
+        }
+
+        if(pwd !== pwdConf) {
+            showToast("As palavras-passe introduzidas não coincidem!", "error");
+            return;
+        }
+
+        const existing = window.App.registeredUsers.find(u => u.name.toLowerCase() === name.toLowerCase() && u.store.toLowerCase() === store.toLowerCase());
+        if(existing) {
+            showToast("Já existe um utilizador registado com este nome nesta loja.", "error");
+            return;
+        }
+
+        const newUser = { name, store, password: pwd };
+        window.App.registeredUsers.push(newUser);
+        window.App.saveUsers();
+
+        closeRegisterModal();
+
+        // Autologin after registration
+        window.App.saveProfile({
+            uid: 'user_' + Date.now(),
+            name: name,
+            store: store,
+            role: 'user',
+            loginTime: Date.now()
+        });
+
+        showToast("Perfil de colaborador criado com sucesso com palavra-passe!", "success");
+    }
+
+    function handleUserLogin(e) {
+        e.preventDefault();
+        const storeName = document.getElementById('loginStoreName')?.value.trim();
+        const collabName = document.getElementById('loginCollabName')?.value.trim();
+        const pwd = document.getElementById('loginCollabPassword')?.value;
+
+        if(!storeName || !collabName || !pwd) {
+            showToast("Preencha a loja, nome do colaborador e palavra-passe.", "error");
+            return;
+        }
+
+        const userAccount = window.App.registeredUsers.find(
+            u => u.name.toLowerCase() === collabName.toLowerCase() && 
+                 u.store.toLowerCase() === storeName.toLowerCase()
+        );
+
+        if (!userAccount) {
+            showToast("Conta não encontrada! Clique em 'Criar Perfil com Senha' para se registar.", "error");
+            return;
+        }
+
+        if (userAccount.password !== pwd) {
+            showToast("Palavra-passe de colaborador incorreta!", "error");
+            return;
+        }
+
+        window.App.saveProfile({
+            uid: 'user_' + Date.now(),
+            name: userAccount.name,
+            store: userAccount.store,
+            role: 'user',
+            loginTime: Date.now()
+        });
+
+        showToast(`Sessão iniciada como Colaborador (${userAccount.name})!`, "success");
+    }
+
+    function handleTechLogin(e) {
+        e.preventDefault();
+        const techId = document.getElementById('loginTechSelect')?.value;
+        const password = document.getElementById('loginTechPassword')?.value;
+
+        const tech = OFFICIAL_TECHNICIANS.find(t => t.id === techId);
+        if(!tech) {
+            showToast("Selecione um técnico válido.", "error");
+            return;
+        }
+
+        if(password !== tech.password) {
+            showToast("Palavra-passe incorreta! (Padrão: admin123)", "error");
+            return;
+        }
+
+        window.App.saveProfile({
+            uid: tech.id,
+            techId: tech.id,
+            name: tech.name,
+            role: 'admin',
+            spec: tech.spec,
+            loginTime: Date.now()
+        });
+
+        showToast(`Bem-vindo, ${tech.name}! Perfil Técnico ativo.`, "success");
+    }
+
+    function handleDirectorLogin(e) {
+        e.preventDefault();
+        const dirId = document.getElementById('loginDirectorSelect')?.value;
+        const password = document.getElementById('loginDirectorPassword')?.value;
+
+        const dir = OFFICIAL_DIRECTORS.find(d => d.id === dirId);
+        if(!dir) {
+            showToast("Selecione um diretor válido.", "error");
+            return;
+        }
+
+        if(password !== dir.password) {
+            showToast("Palavra-passe de diretor incorreta! (Padrão: director123)", "error");
+            return;
+        }
+
+        window.App.saveProfile({
+            uid: dir.id,
+            name: dir.name,
+            role: 'director',
+            title: dir.role,
+            loginTime: Date.now()
+        });
+
+        showToast(`Acesso concedido! Bem-vindo, ${dir.name}.`, "success");
+    }
+
+    function quickFillTech(techId) {
+        switchLoginTab('tech');
+        const select = document.getElementById('loginTechSelect');
+        const pwd = document.getElementById('loginTechPassword');
+        if(select) select.value = techId;
+        if(pwd) pwd.value = 'admin123';
+    }
+
+    function quickFillDirector() {
+        switchLoginTab('director');
+        const select = document.getElementById('loginDirectorSelect');
+        const pwd = document.getElementById('loginDirectorPassword');
+        if(select) select.value = 'dir_carlos';
+        if(pwd) pwd.value = 'director123';
+    }
+
+    function logout() {
+        showCustomConfirm("Deseja terminar a sessão e regressar ao ecrã inicial?", () => {
+            localStorage.removeItem(STORAGE_KEY_PROFILE);
+            window.App.profile = null;
+            showScreen('loginScreen');
+            showToast("Sessão encerrada com sucesso.", "info");
+        });
+    }
+
+    function setupDashboard() {
+        showScreen('mainAppScreen');
+        
+        const profile = window.App.profile;
+        if(!profile) return;
+
+        const navName = document.getElementById('navUserName');
+        if(navName) navName.innerText = profile.name;
+
+        const roleBadge = document.getElementById('navRoleBadge');
+        const adminBannerNotice = document.getElementById('adminBannerNotice');
+        const directorBannerNotice = document.getElementById('directorBannerNotice');
+        const tabDirector = document.getElementById('tabLinkDirector');
+
+        if(adminBannerNotice) adminBannerNotice.classList.add('hidden');
+        if(directorBannerNotice) directorBannerNotice.classList.add('hidden');
+        if(tabDirector) tabDirector.classList.add('hidden');
+
+        if (roleBadge) {
+            if (profile.role === 'director') {
+                roleBadge.innerHTML = `<i class="fa-solid fa-award mr-1.5 text-amber-300"></i> Direção / Chefia (${profile.name})`;
+                roleBadge.className = 'text-xs bg-executive-800 border border-amber-400/50 px-3 py-1 rounded-full text-white font-bold inline-flex items-center shadow-md';
+                if(directorBannerNotice) directorBannerNotice.classList.remove('hidden');
+                if(tabDirector) tabDirector.classList.remove('hidden');
+            } else if (profile.role === 'admin') {
+                roleBadge.innerHTML = `<i class="fa-solid fa-shield-halved mr-1.5 text-amber-300"></i> Admin / Técnico (${profile.name})`;
+                roleBadge.className = 'text-xs bg-brand-800 border border-brand-600 px-3 py-1 rounded-full text-white font-bold inline-flex items-center shadow-sm';
+                if(adminBannerNotice) adminBannerNotice.classList.remove('hidden');
+            } else {
+                roleBadge.innerHTML = `<i class="fa-solid fa-store mr-1.5 text-brand-200"></i> Lojista / ${profile.store || 'Balcão'}`;
+                roleBadge.className = 'text-xs bg-slate-800 px-3 py-1 rounded-full text-white font-medium inline-flex items-center shadow-sm';
+            }
+        }
+
+        populateTechDropdowns();
+        renderTechDirectory();
+        renderTickets();
+
+        if (profile.role === 'director') {
+            renderDirectorAnalytics();
+            switchMainTab('director');
+        } else {
+            switchMainTab('chamados');
+        }
+    }
+
+    function populateTechDropdowns() {
+        const selectNew = document.getElementById('formTechAssign');
+        const selectEdit = document.getElementById('editTechAssign');
+        
+        let options = '<option value="">-- Sem Técnico Atribuído --</option>';
+        OFFICIAL_TECHNICIANS.forEach(t => {
+            options += `<option value="${t.id}">${t.name} (${t.spec})</option>`;
+        });
+
+        if(selectNew) selectNew.innerHTML = options;
+        if(selectEdit) selectEdit.innerHTML = options;
+    }
+
+    function switchMainTab(tabName) {
+        const vChamados = document.getElementById('viewChamados');
+        const vDirector = document.getElementById('viewDirector');
+        const vChat = document.getElementById('viewChat');
+        const vTechs = document.getElementById('viewTechs');
+
+        if(vChamados) vChamados.classList.add('hidden');
+        if(vDirector) vDirector.classList.add('hidden');
+        if(vChat) vChat.classList.add('hidden');
+        if(vTechs) vTechs.classList.add('hidden');
+
+        const tabC = document.getElementById('tabLinkChamados');
+        const tabD = document.getElementById('tabLinkDirector');
+        const tabCh = document.getElementById('tabLinkChat');
+        const tabT = document.getElementById('tabLinkTechs');
+
+        const inactiveStyle = "px-4 py-2 font-bold text-xs rounded-xl transition-all border text-slate-600 hover:bg-slate-100 border-transparent whitespace-nowrap";
+        const activeStyle = "px-4 py-2 font-bold text-xs rounded-xl bg-brand-600 text-white shadow-md border-brand-700 whitespace-nowrap";
+
+        if(tabC) tabC.className = inactiveStyle;
+        if(tabD) tabD.className = inactiveStyle;
+        if(tabCh) tabCh.className = inactiveStyle;
+        if(tabT) tabT.className = inactiveStyle;
+
+        if(tabName === 'chamados') {
+            if(vChamados) vChamados.classList.remove('hidden');
+            if(tabC) tabC.className = activeStyle;
+            renderTickets();
+        } else if(tabName === 'director') {
+            if(vDirector) vDirector.classList.remove('hidden');
+            if(tabD) tabD.className = "px-4 py-2 font-bold text-xs rounded-xl bg-executive-800 text-amber-300 shadow-md border-amber-400/40 whitespace-nowrap";
+            renderDirectorAnalytics();
+        } else if(tabName === 'chat') {
+            if(vChat) vChat.classList.remove('hidden');
+            if(tabCh) tabCh.className = activeStyle;
+            renderChatTechList();
+            renderChatHistory();
+        } else if(tabName === 'techs') {
+            if(vTechs) vTechs.classList.remove('hidden');
+            if(tabT) tabT.className = activeStyle;
+        }
+    }
+
+    function renderTickets() {
+        if(!window.App) return;
+        let list = [...(window.App.tickets || [])];
+        list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+        const searchQ = (document.getElementById('searchInput')?.value || '').toLowerCase();
+        const filterStatus = document.getElementById('filterStatus')?.value || '';
+        const filterTech = document.getElementById('filterTech')?.value || '';
+
+        list = list.filter(t => {
+            const matchesSearch = !searchQ || 
+                                  (t.displayId || '').toLowerCase().includes(searchQ) || 
+                                  (t.store || '').toLowerCase().includes(searchQ) ||
+                                  (t.equipment || '').toLowerCase().includes(searchQ) ||
+                                  (t.clientName || '').toLowerCase().includes(searchQ) ||
+                                  (t.collaborator || '').toLowerCase().includes(searchQ);
+            const matchesStatus = filterStatus === '' || t.status === filterStatus;
+            const matchesTech = filterTech === '' || t.assignedTechId === filterTech;
+            return matchesSearch && matchesStatus && matchesTech;
+        });
+
+        // Update stats
+        const statTotal = document.getElementById('statTotal');
+        if(statTotal) statTotal.innerText = window.App.tickets.length;
+        
+        const statAbertos = document.getElementById('statAbertos');
+        if(statAbertos) statAbertos.innerText = window.App.tickets.filter(t => t.status === 'Aberto').length;
+        
+        const statAndamento = document.getElementById('statAndamento');
+        if(statAndamento) statAndamento.innerText = window.App.tickets.filter(t => t.status === 'Em Andamento').length;
+
+        const statConcluidos = document.getElementById('statConcluidos');
+        if(statConcluidos) statConcluidos.innerText = window.App.tickets.filter(t => t.status === 'Concluído').length;
+
+        const tbody = document.getElementById('ticketTableBody');
+        const emptyState = document.getElementById('emptyState');
+        const tableContainer = document.getElementById('tableContainer');
+
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        if (list.length === 0) {
+            if(emptyState) emptyState.classList.remove('hidden');
+            if(tableContainer) tableContainer.classList.add('hidden');
+            return;
+        }
+
+        if(emptyState) emptyState.classList.add('hidden');
+        if(tableContainer) tableContainer.classList.remove('hidden');
+
+        const canEdit = window.App.profile && (window.App.profile.role === 'admin' || window.App.profile.role === 'director');
+
+        list.forEach(t => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50 transition-colors border-b border-slate-200/60 text-xs';
+
+            let statusBadge = '';
+            if(t.status === 'Aberto') statusBadge = '<span class="px-2.5 py-1 bg-rose-100 text-rose-700 font-bold rounded-full border border-rose-200"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Aberto</span>';
+            else if(t.status === 'Em Andamento') statusBadge = '<span class="px-2.5 py-1 bg-amber-100 text-amber-700 font-bold rounded-full border border-amber-200"><i class="fa-solid fa-spinner animate-spin mr-1"></i>Em Andamento</span>';
+            else if(t.status === 'Pendente Peças') statusBadge = '<span class="px-2.5 py-1 bg-purple-100 text-purple-700 font-bold rounded-full border border-purple-200"><i class="fa-solid fa-clock mr-1"></i>Pendente</span>';
+            else statusBadge = '<span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 font-bold rounded-full border border-emerald-200"><i class="fa-solid fa-check mr-1"></i>Concluído</span>';
+
+            let priorityBadge = '';
+            if(t.priority === 'Crítica') priorityBadge = '<span class="text-rose-600 font-extrabold flex items-center"><i class="fa-solid fa-fire mr-1 text-rose-500"></i>Crítica</span>';
+            else if(t.priority === 'Alta') priorityBadge = '<span class="text-orange-600 font-bold">Alta</span>';
+            else priorityBadge = `<span class="text-slate-600">${t.priority}</span>`;
+
+            const dateStr = new Date(t.createdAt).toLocaleString('pt-PT', { dateStyle: 'short', timeStyle: 'short' });
+
+            tr.innerHTML = `
+                <td class="py-3.5 px-4 font-mono font-bold text-brand-700">${t.displayId}</td>
+                <td class="py-3.5 px-4 text-slate-500">${dateStr}</td>
+                <td class="py-3.5 px-4 font-semibold text-slate-800">${escapeHtml(t.store)}</td>
+                <td class="py-3.5 px-4 text-slate-600 max-w-[180px] truncate" title="${escapeHtml(t.equipment)}">${escapeHtml(t.equipment)}</td>
+                <td class="py-3.5 px-4 font-medium text-slate-700">${t.assignedTechName ? `<span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-semibold border border-slate-200"><i class="fa-solid fa-user-gear mr-1 text-brand-600"></i>${escapeHtml(t.assignedTechName)}</span>` : '<span class="text-slate-400 italic">Não Atribuído</span>'}</td>
+                <td class="py-3.5 px-4">${priorityBadge}</td>
+                <td class="py-3.5 px-4">${statusBadge}</td>
+                <td class="py-3.5 px-4 text-right space-x-1">
+                    <button onclick="viewTicket('${t.id}')" class="bg-brand-50 hover:bg-brand-100 text-brand-700 px-3 py-1.5 rounded-lg font-bold transition-all border border-brand-200">
+                        <i class="fa-regular fa-eye mr-1"></i> Ver
+                    </button>
+                    ${canEdit ? `
+                        <button onclick="openEditTicketModal('${t.id}')" class="bg-slate-800 hover:bg-black text-white px-3 py-1.5 rounded-lg font-bold transition-all shadow-sm">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Editar
+                        </button>
+                        <button onclick="deleteTicket('${t.id}')" class="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 px-2.5 py-1.5 rounded-lg transition-all" title="Eliminar Chamado">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    ` : ''}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderDirectorAnalytics() {
+        const grid = document.getElementById('directorTechAnalysisGrid');
+        if(!grid) return;
+        grid.innerHTML = '';
+
+        const allTickets = window.App.tickets || [];
+        const totalTickets = allTickets.length;
+        const totalCompleted = allTickets.filter(t => t.status === 'Concluído').length;
+        const globalRate = totalTickets > 0 ? Math.round((totalCompleted / totalTickets) * 100) : 100;
+
+        const elGlobalRate = document.getElementById('directorGlobalRate');
+        if(elGlobalRate) elGlobalRate.innerText = `${globalRate}%`;
+
+        const elCritCount = document.getElementById('directorCriticalCount');
+        if(elCritCount) elCritCount.innerText = allTickets.filter(t => t.priority === 'Crítica' && t.status === 'Concluído').length;
+
+        OFFICIAL_TECHNICIANS.forEach(t => {
+            const techTickets = allTickets.filter(tk => tk.assignedTechId === t.id);
+            const countTotal = techTickets.length;
+            const countDone = techTickets.filter(tk => tk.status === 'Concluído').length;
+            const countOpen = techTickets.filter(tk => tk.status === 'Aberto' || tk.status === 'Em Andamento').length;
+            const rate = countTotal > 0 ? Math.round((countDone / countTotal) * 100) : 100;
+
+            const existingReview = window.App.techReviews[t.id] || '';
+
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4';
+            card.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="${t.avatarColor} w-12 h-12 rounded-2xl text-white font-black text-lg flex items-center justify-center shadow-md">
+                            ${t.name.split(' ').map(n=>n[0]).join('')}
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-slate-900 text-sm flex items-center">
+                                ${t.name}
+                                <span class="ml-2 text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full border border-slate-200">${t.spec}</span>
+                            </h4>
+                            <p class="text-xs text-slate-500 mt-0.5">${t.role} • ${t.email}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <div class="text-center px-2">
+                            <span class="block text-[10px] uppercase font-bold text-slate-400">Atribuídos</span>
+                            <span class="font-black text-slate-800 text-sm">${countTotal}</span>
+                        </div>
+                        <div class="border-r h-6"></div>
+                        <div class="text-center px-2">
+                            <span class="block text-[10px] uppercase font-bold text-emerald-600">Concluídos</span>
+                            <span class="font-black text-emerald-600 text-sm">${countDone}</span>
+                        </div>
+                        <div class="border-r h-6"></div>
+                        <div class="text-center px-2">
+                            <span class="block text-[10px] uppercase font-bold text-rose-600">Pendentes</span>
+                            <span class="font-black text-rose-600 text-sm">${countOpen}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rate Bar -->
+                <div>
+                    <div class="flex justify-between items-center text-xs font-bold mb-1">
+                        <span class="text-slate-600">Taxa de Eficiência / Resolução</span>
+                        <span class="text-brand-700 font-black">${rate}%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-brand-600 to-emerald-500 h-2.5 rounded-full" style="width: ${rate}%"></div>
+                    </div>
+                </div>
+
+                <!-- Director Note Module -->
+                <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200/80 space-y-2">
+                    <label class="block text-[10px] font-black uppercase text-amber-900 flex items-center">
+                        <i class="fa-solid fa-award mr-1 text-amber-600"></i> Avaliação & Parecer da Chefia para ${t.name}:
+                    </label>
+                    <textarea id="review_${t.id}" rows="2" placeholder="Escreva a avaliação de desempenho, pontos fortes e observações para este técnico..." class="w-full border border-amber-300 rounded-xl px-3 py-2 text-xs bg-white focus:ring-amber-500">${escapeHtml(existingReview)}</textarea>
+                    <div class="flex justify-end">
+                        <button onclick="saveDirectorTechReview('${t.id}')" class="bg-executive-800 hover:bg-black text-white font-bold text-xs px-4 py-1.5 rounded-lg shadow-sm transition-all flex items-center space-x-1">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Guardar Avaliação</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function saveDirectorTechReview(techId) {
+        const textarea = document.getElementById(`review_${techId}`);
+        if(!textarea) return;
+        
+        const note = textarea.value.trim();
+        window.App.techReviews[techId] = note;
+        window.App.saveTechReviews();
+
+        showToast("Parecer de avaliação registado com sucesso no perfil do técnico!", "success");
+    }
+
+    function openNewTicketModal() {
+        const form = document.getElementById('ticketForm');
+        if(form) form.reset();
+        
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const year = new Date().getFullYear();
+        
+        const idField = document.getElementById('formTicketId');
+        if(idField) idField.value = `TICK-${year}-${randomNum}`;
+        
+        const now = new Date();
+        const dateField = document.getElementById('formTicketDate');
+        const purchaseField = document.getElementById('formPurchaseDate');
+        
+        if(dateField) dateField.value = now.toLocaleString('pt-PT');
+        if(purchaseField) purchaseField.value = now.toISOString().split('T')[0];
+
+        if(window.App.profile && window.App.profile.role === 'user') {
+            const storeField = document.getElementById('formStore');
+            const collabField = document.getElementById('formCollaborator');
+            if(storeField) storeField.value = window.App.profile.store || '';
+            if(collabField) collabField.value = window.App.profile.name || '';
+        }
+
+        const modal = document.getElementById('ticketModal');
+        if(modal) modal.classList.remove('hidden');
+    }
+
+    function closeModal() { document.getElementById('ticketModal')?.classList.add('hidden'); }
+    function closeDetailsModal() { document.getElementById('detailsModal')?.classList.add('hidden'); }
+    function closeEditModal() { document.getElementById('editModal')?.classList.add('hidden'); }
+
+    function saveNewTicket(e) {
+        e.preventDefault();
+
+        const techSelect = document.getElementById('formTechAssign');
+        const assignedTechId = techSelect ? techSelect.value : '';
+        const assignedTech = OFFICIAL_TECHNICIANS.find(t => t.id === assignedTechId);
+
+        const newTicket = {
+            id: 'tick_' + Date.now(),
+            displayId: document.getElementById('formTicketId')?.value || '',
+            createdAt: Date.now(),
+            store: document.getElementById('formStore')?.value.trim() || '',
+            collaborator: document.getElementById('formCollaborator')?.value.trim() || '',
+            contact: document.getElementById('formContact')?.value.trim() || '',
+            type: document.getElementById('formType')?.value || 'Venda / Equipamento Novo',
+            priority: document.getElementById('formPriority')?.value || 'Média',
+            clientName: document.getElementById('formClientName')?.value.trim() || '',
+            clientContact: document.getElementById('formClientContact')?.value.trim() || '',
+            invoice: document.getElementById('formInvoice')?.value.trim() || '',
+            purchaseDate: document.getElementById('formPurchaseDate')?.value || '',
+            equipment: document.getElementById('formEquipment')?.value.trim() || '',
+            description: document.getElementById('formDescription')?.value.trim() || '',
+            diagCharger: !!document.getElementById('diagCharger')?.checked,
+            diagReset: !!document.getElementById('diagReset')?.checked,
+            diagCables: !!document.getElementById('diagCables')?.checked,
+            notes: document.getElementById('formNotes')?.value.trim() || '',
+            status: 'Aberto',
+            assignedTechId: assignedTechId || '',
+            assignedTechName: assignedTech ? assignedTech.name : '',
+            resolutionNotes: ''
+        };
+
+        window.App.tickets.unshift(newTicket);
+        window.App.saveTickets();
+
+        showToast("Chamado registado com sucesso!", "success");
+        closeModal();
+    }
+
+    function viewTicket(ticketId) {
+        const ticket = window.App.tickets.find(t => t.id === ticketId);
+        if(!ticket) return;
+
+        const setT = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val || 'N/A'; };
+
+        setT('detId', ticket.displayId);
+        setT('detDate', new Date(ticket.createdAt).toLocaleString('pt-PT'));
+        setT('detStore', ticket.store);
+        setT('detCollab', ticket.collaborator);
+        setT('detContact', ticket.contact);
+        setT('detType', ticket.type);
+        setT('detPriority', ticket.priority);
+        setT('detClient', ticket.clientName);
+        setT('detClientContact', ticket.clientContact);
+        setT('detInvoice', ticket.invoice);
+        setT('detPurchase', ticket.purchaseDate);
+        setT('detEquip', ticket.equipment);
+        setT('detDesc', ticket.description);
+        setT('detTechAssigned', ticket.assignedTechName || 'Ainda não atribuído');
+        setT('detNotes', ticket.notes || 'Sem observações da loja.');
+        setT('detResolutionNotes', ticket.resolutionNotes || 'Ainda sem relatório técnico registado.');
+        
+        const elCharger = document.getElementById('detDiagCharger');
+        const elReset = document.getElementById('detDiagReset');
+        const elCables = document.getElementById('detDiagCables');
+
+        if(elCharger) elCharger.className = ticket.diagCharger ? 'fa-solid fa-square-check text-brand-600 mr-2' : 'fa-regular fa-square text-slate-400 mr-2';
+        if(elReset) elReset.className = ticket.diagReset ? 'fa-solid fa-square-check text-brand-600 mr-2' : 'fa-regular fa-square text-slate-400 mr-2';
+        if(elCables) elCables.className = ticket.diagCables ? 'fa-solid fa-square-check text-brand-600 mr-2' : 'fa-regular fa-square text-slate-400 mr-2';
+        
+        const statusEl = document.getElementById('detStatusBadge');
+        if(statusEl) {
+            statusEl.innerText = ticket.status;
+            if(ticket.status === 'Aberto') statusEl.className = 'px-3 py-1 bg-rose-100 text-rose-700 rounded-full font-bold text-xs';
+            else if(ticket.status === 'Em Andamento') statusEl.className = 'px-3 py-1 bg-amber-100 text-amber-700 rounded-full font-bold text-xs';
+            else statusEl.className = 'px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold text-xs';
+        }
+
+        const chatBtn = document.getElementById('detContactTechBtn');
+        if(chatBtn) {
+            chatBtn.onclick = () => {
+                closeDetailsModal();
+                startDirectChatWithTech(ticket.assignedTechId || 'tech_antonio');
+            };
+        }
+
+        document.getElementById('detailsModal')?.classList.remove('hidden');
+    }
+
+    window.editingTicketId = null;
+
+    function openEditTicketModal(ticketId) {
+        if (!window.App.profile || (window.App.profile.role !== 'admin' && window.App.profile.role !== 'director')) {
+            showToast("Apenas Técnicos e a Direção podem editar chamados.", "error");
+            return;
+        }
+
+        const ticket = window.App.tickets.find(t => t.id === ticketId);
+        if(!ticket) return;
+
+        window.editingTicketId = ticketId;
+
+        const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+
+        const elId = document.getElementById('editTicketId');
+        if(elId) elId.innerText = ticket.displayId;
+
+        setVal('editStore', ticket.store);
+        setVal('editCollaborator', ticket.collaborator);
+        setVal('editContact', ticket.contact);
+        setVal('editPriority', ticket.priority);
+        setVal('editStatus', ticket.status);
+        setVal('editTechAssign', ticket.assignedTechId);
+        setVal('editEquipment', ticket.equipment);
+        setVal('editDescription', ticket.description);
+        setVal('editResolutionNotes', ticket.resolutionNotes);
+
+        document.getElementById('editModal')?.classList.remove('hidden');
+    }
+
+    function saveEditedTicket(e) {
+        e.preventDefault();
+
+        if(!window.editingTicketId) return;
+        const ticket = window.App.tickets.find(t => t.id === window.editingTicketId);
+        if(!ticket) return;
+
+        const techId = document.getElementById('editTechAssign')?.value || '';
+        const assignedTech = OFFICIAL_TECHNICIANS.find(t => t.id === techId);
+
+        ticket.store = document.getElementById('editStore')?.value.trim() || ticket.store;
+        ticket.collaborator = document.getElementById('editCollaborator')?.value.trim() || ticket.collaborator;
+        ticket.contact = document.getElementById('editContact')?.value.trim() || ticket.contact;
+        ticket.priority = document.getElementById('editPriority')?.value || ticket.priority;
+        ticket.status = document.getElementById('editStatus')?.value || ticket.status;
+        ticket.assignedTechId = techId;
+        ticket.assignedTechName = assignedTech ? assignedTech.name : '';
+        ticket.equipment = document.getElementById('editEquipment')?.value.trim() || ticket.equipment;
+        ticket.description = document.getElementById('editDescription')?.value.trim() || ticket.description;
+        ticket.resolutionNotes = document.getElementById('editResolutionNotes')?.value.trim() || '';
+
+        window.App.saveTickets();
+        showToast("Chamado atualizado com sucesso!", "success");
+        closeEditModal();
+    }
+
+    function deleteTicket(ticketId) {
+        if (!window.App.profile || (window.App.profile.role !== 'admin' && window.App.profile.role !== 'director')) {
+            showToast("Apenas permissões elevadas podem eliminar chamados.", "error");
+            return;
+        }
+
+        showCustomConfirm("Tem a certeza que deseja ELIMINAR permanentemente este chamado?", () => {
+            window.App.tickets = window.App.tickets.filter(t => t.id !== ticketId);
+            window.App.saveTickets();
+            showToast("Chamado eliminado.", "info");
+        });
+    }
+
+    function renderTechDirectory() {
+        const grid = document.getElementById('techCardsGrid');
+        if(!grid) return;
+        grid.innerHTML = '';
+
+        OFFICIAL_TECHNICIANS.forEach(t => {
+            const reviewNote = window.App.techReviews[t.id];
+
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between';
+            card.innerHTML = `
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="${t.avatarColor} w-12 h-12 rounded-xl text-white font-black text-lg flex items-center justify-center shadow-md">
+                            ${t.name.split(' ').map(n=>n[0]).join('')}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-sm leading-tight">${t.name}</h4>
+                            <p class="text-[11px] font-semibold text-brand-700 mt-0.5">${t.role}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p><i class="fa-solid fa-microchip mr-2 text-slate-400"></i><strong>Especialidade:</strong> ${t.spec}</p>
+                        <p><i class="fa-solid fa-phone mr-2 text-slate-400"></i><strong>Telefone:</strong> ${t.phone}</p>
+                        <p><i class="fa-solid fa-envelope mr-2 text-slate-400"></i><strong>E-mail:</strong> ${t.email}</p>
+                    </div>
+
+                    ${reviewNote ? `
+                        <div class="mt-3 p-2.5 bg-amber-50 rounded-xl border border-amber-200/80 text-[11px] text-amber-900">
+                            <span class="font-bold block uppercase text-[9px] text-amber-700"><i class="fa-solid fa-award mr-1"></i> Parecer da Direção:</span>
+                            <p class="italic mt-0.5">${escapeHtml(reviewNote)}</p>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full ${t.status === 'online' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                        <i class="fa-solid fa-circle text-[6px] mr-1"></i> ${t.status === 'online' ? 'Disponível' : 'Em Atendimento'}
+                    </span>
+                    <button onclick="startDirectChatWithTech('${t.id}')" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition-all shadow-sm flex items-center space-x-1">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>Contactar</span>
+                    </button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function startDirectChatWithTech(techId) {
+        window.App.activeChatTechId = techId;
+        switchMainTab('chat');
+    }
+
+    function renderChatTechList() {
+        const container = document.getElementById('chatTechList');
+        if(!container) return;
+        container.innerHTML = '';
+
+        OFFICIAL_TECHNICIANS.forEach(t => {
+            const isActive = t.id === window.App.activeChatTechId;
+            const item = document.createElement('button');
+            item.onclick = () => {
+                window.App.activeChatTechId = t.id;
+                renderChatTechList();
+                renderChatHistory();
+            };
+            item.className = `w-full text-left p-3 rounded-xl transition-all flex items-center space-x-3 border ${isActive ? 'bg-brand-50 border-brand-200 shadow-sm' : 'hover:bg-slate-50 border-transparent'}`;
+            item.innerHTML = `
+                <div class="${t.avatarColor} w-10 h-10 rounded-xl text-white font-bold text-xs flex items-center justify-center flex-shrink-0">
+                    ${t.name.split(' ').map(n=>n[0]).join('')}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <h5 class="text-xs font-bold text-slate-900 truncate">${t.name}</h5>
+                        <span class="w-2 h-2 rounded-full ${t.status === 'online' ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 truncate mt-0.5">${t.spec}</p>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function renderChatHistory() {
+        const box = document.getElementById('chatMessagesBox');
+        if(!box || !window.App.profile) return;
+        box.innerHTML = '';
+
+        const activeTech = OFFICIAL_TECHNICIANS.find(t => t.id === window.App.activeChatTechId);
+        if(activeTech) {
+            const nameEl = document.getElementById('activeChatTechName');
+            const specEl = document.getElementById('activeChatTechSpec');
+            if(nameEl) nameEl.innerText = activeTech.name;
+            if(specEl) specEl.innerText = `${activeTech.role} • ${activeTech.phone}`;
+        }
+
+        const filteredMsgs = window.App.messages.filter(m => m.receiverTechId === window.App.activeChatTechId);
+
+        if(filteredMsgs.length === 0) {
+            box.innerHTML = `
+                <div class="text-center py-12 text-slate-400">
+                    <i class="fa-regular fa-comments text-4xl mb-2 text-slate-300"></i>
+                    <p class="text-xs font-semibold">Sem mensagens recentes com este técnico.</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Escreva uma mensagem abaixo para iniciar o diálogo direto.</p>
+                </div>
+            `;
+            return;
+        }
+
+        filteredMsgs.forEach(m => {
+            const isMe = (window.App.profile.role === 'user' && m.senderRole === 'user') || 
+                         (window.App.profile.role === 'admin' && m.senderRole === 'admin' && window.App.profile.techId === m.receiverTechId) ||
+                         (window.App.profile.role === 'director' && m.senderRole === 'director');
+
+            const div = document.createElement('div');
+            div.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1`;
+            
+            const timeStr = new Date(m.timestamp).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+
+            div.innerHTML = `
+                <span class="text-[10px] font-semibold text-slate-400 px-1">${escapeHtml(m.senderName)} • ${timeStr}</span>
+                <div class="max-w-[80%] px-4 py-2.5 text-xs ${isMe ? 'bg-brand-600 text-white chat-bubble-user shadow-sm' : 'bg-white text-slate-800 border border-slate-200/80 chat-bubble-tech shadow-sm'}">
+                    ${escapeHtml(m.text)}
+                </div>
+            `;
+            box.appendChild(div);
+        });
+
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function sendChatMessage(e) {
+        e.preventDefault();
+        const input = document.getElementById('chatInputText');
+        if(!input) return;
+        const text = input.value.trim();
+        if(!text) return;
+
+        const profile = window.App.profile;
+        if(!profile) return;
+
+        const newMsg = {
+            id: 'msg_' + Date.now(),
+            senderRole: profile.role,
+            senderName: profile.name + (profile.store ? ` (${profile.store})` : ''),
+            receiverTechId: window.App.activeChatTechId,
+            text: text,
+            timestamp: Date.now()
+        };
+
+        window.App.messages.push(newMsg);
+        window.App.saveMessages();
+
+        input.value = '';
+    }
+
+    function downloadSelfHTML() {
+        const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'InovaTI_Portal_Chamados_v4.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast("Cópia autônoma (.html) guardada!", "success");
+    }
+
+    function showScreen(screenId) {
+        const login = document.getElementById('loginScreen');
+        const main = document.getElementById('mainAppScreen');
+        if(login) login.classList.add('hidden');
+        if(main) main.classList.add('hidden');
+        
+        const target = document.getElementById(screenId);
+        if(target) target.classList.remove('hidden');
+    }
+
+    function showToast(msg, type='info') {
+        const toast = document.getElementById('globalToast');
+        if(!toast) return;
+        
+        toast.innerText = msg;
+        
+        if (type === 'error') {
+            toast.classList.remove('bg-emerald-600');
+            toast.classList.add('bg-rose-600');
+        } else {
+            toast.classList.remove('bg-rose-600');
+            toast.classList.add('bg-emerald-600');
+        }
+
+        toast.classList.remove('translate-y-10', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+
+        if(window.toastTimer) clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => {
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('translate-y-10', 'opacity-0');
+        }, 3500);
+    }
+
+    function showCustomConfirm(message, onConfirm) {
+        const modal = document.getElementById('confirmModal');
+        const textEl = document.getElementById('confirmModalText');
+        if(textEl) textEl.innerText = message;
+        
+        window.activeConfirmAction = () => {
+            onConfirm();
+            closeConfirmModal();
+        };
+        if(modal) modal.classList.remove('hidden');
+    }
+
+    function closeConfirmModal() { document.getElementById('confirmModal')?.classList.add('hidden'); }
+
+    function escapeHtml(str) {
+        return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    window.onload = function() {
+        window.App.init();
+    };
+</script>
+
+</body>
+</html>
